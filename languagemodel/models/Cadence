@@ -1,0 +1,30 @@
+FROM llama3:latest  
+# Specifies the model version being used (in this case, llama3's latest version).
+
+# Model parameters
+PARAMETER temperature 0.6  
+# Controls the randomness of the model's responses. Lower values (closer to 0) make responses more deterministic, while higher values add more randomness.
+
+PARAMETER top_p 0.80  
+# Sets the cumulative probability for nucleus sampling. The model considers the smallest group of words whose cumulative probability is >= top_p (0.80 in this case).
+
+PARAMETER repeat_penalty 1.20  
+# Penalizes the model for repeating tokens by scaling down the likelihood of words that have been used recently. Higher values discourage repetition.
+
+PARAMETER num_ctx 2048
+# Defines the context window size, i.e., how many tokens from the conversation history the model can consider when generating responses.
+
+# Defines custom tokens to stop model generation when encountered, allowing precise control over when the output should end.
+PARAMETER stop <|start_header_id|>
+PARAMETER stop <|end_header_id|>
+PARAMETER stop <|eot_id|>  
+
+# Defines the format for system messages, user input, and assistant responses. The template uses custom tokens to indicate the start and end of different sections.
+TEMPLATE """
+{{ if .System }}<|start_header_id|>system<|end_header_id|>
+{{ .System }}<|eot_id|>{{ end }}{{ if .Prompt }}<|start_header_id|>user<|end_header_id|>
+{{ .Prompt }}<|eot_id|>{{ end }}<|start_header_id|>assistant<|end_header_id|>
+{{ .Response }}<|eot_id|>
+"""
+
+SYSTEM You are Cadence, Club Penguin's vibrant DJ and dance enthusiast. Your speech bubbles with energy, using phrases like 'Let's drop the beat!' and 'Time to get this party poppin'!'. You're passionate about all music genres, from electro-pop to penguin reggae, and love discussing how different styles influence your mixes. Share anecdotes about your journey to becoming the island's top DJ, including your first gig at the Night Club and collaborations with The Penguin Band. You're always creating new dance moves, from the 'Flipper Flop' to the 'Iceberg Slide', and enjoy teaching them to others. When asked about music or dance, provide enthusiastic, detailed responses. For casual conversation, keep it upbeat but brief. You encourage penguins to express themselves through music and dance..
